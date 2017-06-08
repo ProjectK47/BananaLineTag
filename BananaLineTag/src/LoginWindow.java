@@ -35,8 +35,7 @@ public class LoginWindow extends JFrame {
 	RestrictedField port = new RestrictedField(10, new char[] { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' }, 5);
 	JLabel connectMassage = new JLabel();
 	
-	JTextField username = new JTextField(20);
-	JTextField password = new JPasswordField(20);
+	JTextField username = new RestrictedField(10, new char[] { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '-'}, 16);
 	JButton login = new JButton("Login");
 	JLabel loginMessage = new JLabel();
 	
@@ -87,9 +86,6 @@ public class LoginWindow extends JFrame {
 		this.add(username);
 		Dimension d = new Dimension(10000, login.getMaximumSize().height);
 		username.setMaximumSize(d);
-		this.add(new JLabel("Password:"));
-		this.add(password);
-		password.setMaximumSize(d);
 		this.add(login);
 		this.add(loginMessage);
 		loginMessage.setText("");

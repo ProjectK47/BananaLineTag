@@ -12,6 +12,8 @@ public class Connection extends Thread {
 	
 	Server server;
 	
+	Player player = new Player();
+	
 	public Connection(Socket s, Server server) throws IOException {
 		this.s = s;
 		this.server = server;
@@ -21,11 +23,32 @@ public class Connection extends Thread {
 	
 	public void run() {
 		try {
-			
+			System.out.println("Login from: "+s.getRemoteSocketAddress());
+			while (true) {
+				int command = in.readInt();
+				
+				if (command == Client.SET_USERNAME) {
+					setUsername(server.getUsableName(in.readUTF()));
+				}
+			}
 		} catch (Exception e) {
-			
+			System.out.println(s.getRemoteSocketAddress()+" disconnected.");
 		}
-		server.connections.remove(this);
+		server.disconnected(this);
 	}
+	
+	public void setUsername(String name) {
+		try {
+			out.writeInt(USERNAME_SET);
+			out.writeUTF(name);
+		} catch (IOException e) {}
+		System.out.println("Set username of "+s.getRemoteSocketAddress()+" to "+name);
+		player.name = name;
+		
+	}
+	
+	
+	public static final int USERNAME_SET = 0;
+	
 	
 }
