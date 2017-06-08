@@ -14,6 +14,9 @@ public class Connection extends Thread {
 	
 	Player player = new Player();
 	
+	boolean connected = true;
+	boolean inGame = false;
+	
 	public Connection(Socket s, Server server) throws IOException {
 		this.s = s;
 		this.server = server;
@@ -22,10 +25,16 @@ public class Connection extends Thread {
 	}
 	
 	public void run() {
+		if (!connected) return;
 		try {
 			System.out.println("Login from: "+s.getRemoteSocketAddress());
 			while (true) {
+				
 				int command = in.readInt();
+				
+				if (Thread.interrupted()) {
+					break;
+				}
 				
 				if (command == Client.SET_USERNAME) {
 					setUsername(server.getUsableName(in.readUTF()));
@@ -38,17 +47,40 @@ public class Connection extends Thread {
 	}
 	
 	public void setUsername(String name) {
+		if (!connected) return;
 		try {
 			out.writeInt(USERNAME_SET);
 			out.writeUTF(name);
+			inGame = true;
 		} catch (IOException e) {}
 		System.out.println("Set username of "+s.getRemoteSocketAddress()+" to "+name);
 		player.name = name;
 		
 	}
 	
+	public void updateLocations() {
+		if (!connected) return;
+		for (Connection c : server.connections) {
+			if (c != this) {
+				try {
+					out.writeInt(UPDATE_LOCATION);
+					out.writeUTF(c.player.name);
+					out.writeDouble(c.player.x);
+					out.writeDouble(c.player.y);
+				} catch (IOException e) {}
+			}
+		}
+	}
 	
+	
+	/**String name*/
 	public static final int USERNAME_SET = 0;
-	
-	
+	/**String player, double x, double y*/
+	public static final int UPDATE_LOCATION = 1;
+	/**double x, double y*/
+	public static final int UPDATE_YOUR_LOCATION = 2;
+	/**String player*/
+	public static final int ADD_PLAYER = 3;
+	/**String player*/
+	public static final int REMOVE_PLAYER = 4;
 }

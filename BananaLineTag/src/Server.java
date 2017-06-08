@@ -55,6 +55,8 @@ public class Server extends Thread {
 	}
 	
 	public void disconnected(Connection c) {
+		c.interrupt();
+		c.connected = false;
 		this.connections.remove(c);
 	}
 	
