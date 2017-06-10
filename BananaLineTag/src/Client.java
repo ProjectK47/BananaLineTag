@@ -48,44 +48,9 @@ public class Client extends Thread {
 			lw.connectPressed = false;
 		}
 		lw.setVisible(false);
-		try {
-			while (true) {
-				int command = in.readInt();
-				if (command == Connection.ADD_PLAYER) {
-					Player p = new Player();
-					p.name = in.readUTF();
-					players.add(p);
-				} else if (command == Connection.REMOVE_PLAYER) {
-					String name = in.readUTF();
-					for (Player p : players) {
-						if (p.name.equalsIgnoreCase(name)) {
-							players.remove(p);
-							break;
-						}
-					}
-				} else if (command == Connection.UPDATE_LOCATION) {
-					String name = in.readUTF();
-					double x = in.readDouble();
-					double y = in.readDouble();
-					for (Player p : players) {
-						if (p.name.equalsIgnoreCase(name)) {
-							p.x = x;
-							p.y = y;
-							break;
-						}
-					}
-				} else if (command == Connection.UPDATE_YOUR_LOCATION) {
-					double x = in.readDouble();
-					double y = in.readDouble();
-					self.x = x;
-					self.y = y;
-				} else if (command == Connection.USERNAME_SET) {
-					self.name = in.readUTF();
-				}
-			}
-		} catch (Exception e) {
+		ClientInputThread cit = new ClientInputThread(this);
+		cit.start();
 		
-		}
 		
 	}
 	
