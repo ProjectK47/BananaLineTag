@@ -5,6 +5,7 @@ public class Map implements Serializable {
 	
 	private static final long serialVersionUID = -5245572493686594653L;
 
+	
 	ArrayList<Line> lines = new ArrayList<Line>();
 	
 	int r = 255;

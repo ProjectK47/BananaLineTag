@@ -1,5 +1,6 @@
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -11,12 +12,14 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -28,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -36,15 +40,26 @@ public class Editor extends JPanel implements MouseMotionListener, MouseListener
 	private static final long serialVersionUID = 1L;
 	
 	public static void main(String[] args) {
+		JFileChooser fc = new JFileChooser();
 		JFrame frame = new JFrame();
 		Editor e = new Editor();
-		frame.add(e);
+		SquarePanel sp = new SquarePanel();
+		sp.display.add(e);
+		frame.add(sp);
 		frame.setVisible(true);
 		JDialog options = new JDialog(frame);
 		options.add(e.options);
 		options.setVisible(true);
 		options.setSize(e.options.getPreferredSize());
 		frame.setSize(e.options.getPreferredSize());
+		fc.showOpenDialog(frame);
+		try {
+			e.template = ImageIO.read(fc.getSelectedFile());
+		} catch (Exception ex) {
+		
+		}
+		e.updateSettings();
+		
 	}
 	
 	Map map = new Map();
@@ -58,6 +73,8 @@ public class Editor extends JPanel implements MouseMotionListener, MouseListener
 	boolean round = false;
 	
 	boolean dragging = false;
+	
+	BufferedImage template;
 	
 	JPanel options = new JPanel();
 	
@@ -105,7 +122,7 @@ public class Editor extends JPanel implements MouseMotionListener, MouseListener
 					DataInputStream in = new DataInputStream(new FileInputStream(file));
 					byte[] b = new byte[in.readInt()];
 					in.read(b);
-					Map m = (Map)Utils.deserDecompress(b);
+					Map m = (Map) Utils.deserDecompress(b);
 					map = m;
 					background.setColor(new Color(m.r, m.g, m.b));
 					in.close();
@@ -164,12 +181,19 @@ public class Editor extends JPanel implements MouseMotionListener, MouseListener
 		map.g = back.getGreen();
 		map.b = back.getBlue();
 		thickness = slider.getValue() / 1000.0;
+		
+		Container c = SwingUtilities.getAncestorOfClass(SquarePanel.class, this);
+		if (c != null) {
+			c.setBackground(back);
+		}
 	}
 	
 	protected void paintComponent(Graphics g) {
 		g.setColor(new Color(map.r, map.g, map.b));
 		g.fillRect(0, 0, getWidth(), getHeight());
+		g.drawImage(template, 0, 0, getWidth(), getHeight(), null);
 		g.setColor(Color.black);
+		g.drawRect(0, 0, getWidth(), getHeight());
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		Stroke s = g2.getStroke();
