@@ -27,7 +27,18 @@ public class Connection extends Thread {
 	public void run() {
 		if (!connected) return;
 		try {
-			System.out.println("Login from: "+s.getRemoteSocketAddress());
+			System.out.println("Login from: " + s.getRemoteSocketAddress());
+			out.writeInt(SET_MAP);
+			byte[] b = Utils.serCompress(server.map);
+			out.writeInt(b.length);
+			out.write(b);
+			
+			for (Connection c : server.connections) {
+				if (c != this) {
+					addPlayer(c.player.name);
+				}
+			}
+			
 			while (true) {
 				
 				int command = in.readInt();
@@ -38,10 +49,14 @@ public class Connection extends Thread {
 				
 				if (command == Client.SET_USERNAME) {
 					setUsername(server.getUsableName(in.readUTF()));
+				} else if (command == Client.MOVE) {
+					double x = in.readDouble();
+					double y = in.readDouble();
+					move(x, y);
 				}
 			}
 		} catch (Exception e) {
-			System.out.println(s.getRemoteSocketAddress()+" disconnected.");
+			System.out.println(s.getRemoteSocketAddress() + " disconnected.");
 		}
 		server.disconnected(this);
 	}
@@ -52,10 +67,39 @@ public class Connection extends Thread {
 			out.writeInt(USERNAME_SET);
 			out.writeUTF(name);
 			inGame = true;
-		} catch (IOException e) {}
-		System.out.println("Set username of "+s.getRemoteSocketAddress()+" to "+name);
+			for (Connection c : server.connections) {
+				if (c != this) {
+					System.out.println(c.player.name+", "+name);
+					c.removePlayer(player.name);
+					c.addPlayer(name);
+				}
+			}
+		} catch (IOException e) {
+		}
+		System.out.println("Set username of " + s.getRemoteSocketAddress() + " to " + name);
 		player.name = name;
 		
+	}
+	
+	public void removePlayer(String name) {
+		try {
+			out.writeInt(REMOVE_PLAYER);
+			out.writeUTF(name);
+		} catch (IOException e) {
+		}
+	}
+	
+	public void addPlayer(String name) {
+		try {
+			out.writeInt(ADD_PLAYER);
+			out.writeUTF(name);
+		} catch (IOException e) {
+		}
+	}
+	
+	public void move(double x, double y) {
+		player.x = x;
+		player.y = y;
 	}
 	
 	public void updateLocations() {
@@ -67,20 +111,36 @@ public class Connection extends Thread {
 					out.writeUTF(c.player.name);
 					out.writeDouble(c.player.x);
 					out.writeDouble(c.player.y);
-				} catch (IOException e) {}
+				} catch (IOException e) {
+				}
 			}
 		}
 	}
 	
+	public void interrupt() {
+		try {
+			s.close();
+		} catch (IOException e) {
+		}
+		super.interrupt();
+	}
 	
-	/**String name*/
+	/** String name */
 	public static final int USERNAME_SET = 0;
-	/**String player, double x, double y*/
+	/** String player, double x, double y */
 	public static final int UPDATE_LOCATION = 1;
-	/**double x, double y*/
+	/** double x, double y */
 	public static final int UPDATE_YOUR_LOCATION = 2;
-	/**String player*/
+	/** String player */
 	public static final int ADD_PLAYER = 3;
-	/**String player*/
+	/** String player */
 	public static final int REMOVE_PLAYER = 4;
+	/** String player */
+	public static final int DOWN = 5;
+	/***/
+	public static final int UP = 6;
+	/** String name, int length, byte[length] Utils.imageToBytes(image) */
+	public static final int SET_PLAYER_ICON = 7;
+	/** int length, byte[length] Utils.serCompress(map) */
+	public static final int SET_MAP = 8;
 }

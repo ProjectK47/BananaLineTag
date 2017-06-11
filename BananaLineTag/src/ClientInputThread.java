@@ -15,10 +15,13 @@ public class ClientInputThread extends Thread {
 		try {
 			while (true) {
 				int command = c.in.readInt();
+//				System.out.println(command);
 				if (command == Connection.ADD_PLAYER) {
 					Player p = new Player();
+
 					p.name = c.in.readUTF();
 					c.players.add(p);
+					System.out.println("Added Player");
 				} else if (command == Connection.REMOVE_PLAYER) {
 					String name = c.in.readUTF();
 					for (Player p : c.players) {
@@ -45,10 +48,15 @@ public class ClientInputThread extends Thread {
 					c.self.y = y;
 				} else if (command == Connection.USERNAME_SET) {
 					c.self.name = c.in.readUTF();
+				} else if (command == Connection.SET_MAP) {
+					int size = c.in.readInt();
+					byte[] b = new byte[size];
+					c.in.read(b);
+					c.map = (Map)Utils.deserDecompress(b);
 				}
 			}
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 	}
 }
