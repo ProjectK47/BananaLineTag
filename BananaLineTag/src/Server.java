@@ -100,6 +100,11 @@ public class Server extends Thread {
 		c.interrupt();
 		c.connected = false;
 		this.connections.remove(c);
+		if (c.inGame) {
+			for (Connection co : connections) {
+				co.removePlayer(co.player.name);
+			}
+		}
 	}
 	
 }

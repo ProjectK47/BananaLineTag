@@ -1,6 +1,8 @@
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -8,7 +10,6 @@ import java.awt.Stroke;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.swing.JPanel;
 
@@ -19,7 +20,7 @@ public class Display extends JPanel {
 	Map map;
 	
 	ArrayList<Player> players;
-		
+	
 	Player self;
 	
 	public Display(Map m, ArrayList<Player> ps, Player self) {
@@ -44,7 +45,9 @@ public class Display extends JPanel {
 		}
 		
 		g2.setStroke(s);
-		
+		g.setFont(new Font("Copperplate", Font.PLAIN, (int) (getHeight() * Player.PLAYER_SIZE)));
+		g.setColor(Color.black);
+		FontMetrics fm = g.getFontMetrics();
 		for (Player p : players) {
 			int width = (int) (getWidth() * Player.PLAYER_SIZE);
 			int height = (int) (getHeight() * Player.PLAYER_SIZE);
@@ -52,27 +55,40 @@ public class Display extends JPanel {
 			int x = (int) (getWidth() * p.oldx) - width / 2;
 			int y = (int) (getHeight() * p.oldy) - height / 2;
 			
-			p.oldx = (p.x+p.oldx)/2;
-			p.oldy = (p.y+p.oldy)/2;
-			
 			g.drawImage(p.icon, x, y, width, height, null);
+			
+			x = (int) (getWidth() * p.oldx) - fm.stringWidth(p.name) / 2;
+			y = (int) (getHeight() * p.oldy) - height / 2 - fm.getDescent();
+			g.drawString(p.name, x, y);
+			
+			p.oldx = (p.x + p.oldx + p.oldx) / 3;
+			p.oldy = (p.y + p.oldy + p.oldy) / 3;
+			
 		}
 		int width = (int) (getWidth() * Player.PLAYER_SIZE);
 		int height = (int) (getHeight() * Player.PLAYER_SIZE);
+		
 		int x = (int) (getWidth() * self.oldx) - width / 2;
 		int y = (int) (getHeight() * self.oldy) - height / 2;
-		self.oldx = (self.x+self.oldx)/2;
-		self.oldy = (self.y+self.oldy)/2;
+		
 		g.drawImage(self.icon, x, y, width, height, null);
+		
+		x = (int) (getWidth() * self.oldx) - fm.stringWidth(self.name) / 2;
+		y = (int) (getHeight() * self.oldy) - height / 2 - fm.getDescent();
+		
+		g.drawString(self.name, x, y);
+		
+		self.oldx = (self.x + self.oldx) / 2;
+		self.oldy = (self.y + self.oldy) / 2;
 		
 	}
 	
 }
 
-class Point {
-	double x;
-	double y;
-}
+//class Point {
+//	double x;
+//	double y;
+//}
 
 class SquarePanel extends JPanel implements ComponentListener {
 	

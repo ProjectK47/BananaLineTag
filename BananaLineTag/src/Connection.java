@@ -34,7 +34,7 @@ public class Connection extends Thread {
 			out.write(b);
 			
 			for (Connection c : server.connections) {
-				if (c != this) {
+				if (c != this && c.inGame) {
 					addPlayer(c.player.name);
 				}
 			}

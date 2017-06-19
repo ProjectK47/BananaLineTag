@@ -61,26 +61,24 @@ public class Client extends Thread {
 		try {
 			while (true) {
 				d.repaint(50L);
+				boolean moved = false;
 				if (keys[KeyEvent.VK_W]) {
-					self.y -= 0.01;
-					out.writeInt(MOVE);
-					out.writeDouble(self.x);
-					out.writeDouble(self.y);
+					moved = true;
+					self.y -= 0.005;
 				}
 				if (keys[KeyEvent.VK_A]) {
-					self.x -= 0.01;
-					out.writeInt(MOVE);
-					out.writeDouble(self.x);
-					out.writeDouble(self.y);
+					moved = true;
+					self.x -= 0.005;
 				}
 				if (keys[KeyEvent.VK_S]) {
-					self.y += 0.01;
-					out.writeInt(MOVE);
-					out.writeDouble(self.x);
-					out.writeDouble(self.y);
+					moved = true;
+					self.y += 0.005;
 				}
 				if (keys[KeyEvent.VK_D]) {
-					self.x += 0.01;
+					moved = true;
+					self.x += 0.005;
+				}
+				if (moved) {
 					out.writeInt(MOVE);
 					out.writeDouble(self.x);
 					out.writeDouble(self.y);

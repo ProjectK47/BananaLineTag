@@ -26,5 +26,5 @@ public class Player {
 	public static final int STATE_UP = 1;
 	public static final int STATE_DOWN = 2;
 	
-	public static final double PLAYER_SIZE = 0.037;
+	public static final double PLAYER_SIZE = 0.030;
 }
