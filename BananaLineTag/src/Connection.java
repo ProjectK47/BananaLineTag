@@ -57,6 +57,10 @@ public class Connection extends Thread {
 			}
 		} catch (Exception e) {
 			System.out.println(s.getRemoteSocketAddress() + " disconnected.");
+		} finally {
+			try {
+				s.close();
+			} catch (IOException e) {}
 		}
 		server.disconnected(this);
 	}

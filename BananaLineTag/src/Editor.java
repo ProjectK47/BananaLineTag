@@ -83,6 +83,9 @@ public class Editor extends JPanel implements MouseMotionListener, MouseListener
 	JCheckBox roundedLines = new JCheckBox();
 	JSlider slider = new JSlider(1, 150);
 	
+	/**
+	 * Creates a new editor
+	 */
 	public Editor() {
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
@@ -172,7 +175,9 @@ public class Editor extends JPanel implements MouseMotionListener, MouseListener
 		});
 		
 	}
-	
+	/**
+	 * Resets the current draw info to what is selected in the chooser panel.
+	 */
 	public void updateSettings() {
 		round = roundedLines.isSelected();
 		c = newLine.getColor();
@@ -187,7 +192,10 @@ public class Editor extends JPanel implements MouseMotionListener, MouseListener
 			c.setBackground(back);
 		}
 	}
-	
+	/**
+	 * Renders the current map, along with any other lines that are being drawn.
+	 * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+	 */
 	protected void paintComponent(Graphics g) {
 		g.setColor(new Color(map.r, map.g, map.b));
 		g.fillRect(0, 0, getWidth(), getHeight());
@@ -213,7 +221,10 @@ public class Editor extends JPanel implements MouseMotionListener, MouseListener
 		}
 		g2.setStroke(s);
 	}
-	
+	/**
+	 * Start new line.
+	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
+	 */
 	public void mouseDragged(MouseEvent e) {
 		updateSettings();
 		if (!dragging) {
@@ -225,7 +236,10 @@ public class Editor extends JPanel implements MouseMotionListener, MouseListener
 		atY = (double) e.getY() / getHeight();
 		repaint();
 	}
-	
+	/**
+	 * End new line.
+	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 */
 	public void mouseReleased(MouseEvent e) {
 		updateSettings();
 		if (dragging) {

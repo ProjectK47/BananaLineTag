@@ -5,21 +5,20 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 
 public class Map implements Serializable {
 	
 	private static final long serialVersionUID = -5245572493686594653L;
-
+	
+	/**
+	 * Draws a Map onto a BufferedImage for use as an icon.
+	 * 
+	 * @param map the Map to draw
+	 * @param size the size at which to draw it
+	 * @return the image
+	 */
 	public static BufferedImage generateIcon(Map map, int size) {
 		BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = image.getGraphics();
@@ -40,19 +39,57 @@ public class Map implements Serializable {
 		return image;
 	}
 	
+	/**
+	 * Checks if a player is on the map. <br>
+	 * (On a line, and on the screen)
+	 * 
+	 * @param p the Player to check
+	 * @return if they are standing in a legal location
+	 */
+	public boolean onMap(Player p) {
+		double s = Player.PLAYER_SIZE;
+		if (p.x > 1 + s || p.x < 0 - s || p.y > 1 + s || p.y < 0 - s) {
+			return false;
+		}
+		for (Line l : lines) {
+			if (Utils.distanceToLineSegment(p.x, p.y, l.x1, l.y1, l.x2, l.y2) <= l.thickness + s) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	ArrayList<Line> lines = new ArrayList<Line>();
 	
+	/**
+	 * Background color. Render only effect.
+	 */
 	int r = 255;
 	int g = 255;
 	int b = 255;
+	
 }
 
+/**
+ * Defines a line with arbitrary scale.
+ */
 class Line implements Serializable {
 	
 	private static final long serialVersionUID = -2263006956721187930L;
-
+	
+	/**
+	 * Create a line from (0, 0) to (0, 0)
+	 */
 	public Line() {}
 	
+	/**
+	 * Create a line from (x1, y1) to (x2, y2)
+	 * 
+	 * @param x1 the start x
+	 * @param y1 the start y
+	 * @param x2 the end x
+	 * @param y2 the end y
+	 */
 	public Line(double x1, double y1, double x2, double y2) {
 		this.x1 = x1;
 		this.y1 = y1;
@@ -60,18 +97,27 @@ class Line implements Serializable {
 		this.y2 = y2;
 	}
 	
-	
 	double x1 = 0;
 	double y1 = 0;
 	
 	double x2 = 0;
 	double y2 = 0;
-
+	
+	/**
+	 * Line r g b a
+	 * <p>
+	 * Render only effect.
+	 */
 	int r = 255;
 	int g = 255;
 	int b = 255;
 	int a = 255;
 	
+	/**
+	 * Whether or not to round the line ends.
+	 * <p>
+	 * Render only effect.
+	 */
 	boolean round = false;
 	
 	double thickness = 0.01;

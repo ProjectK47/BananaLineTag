@@ -3,6 +3,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -28,12 +29,13 @@ public class Client extends Thread {
 	
 	SquarePanel sp;
 	Display d;
+	double stamina = 1;
 	
 	boolean[] keys = new boolean[65535];
 	
 	public void run() {
 		
-		login();
+		login();//open login window and wait to be connected to a server
 		
 		initInput();
 		
@@ -60,29 +62,11 @@ public class Client extends Thread {
 		});
 		try {
 			while (true) {
+				
 				d.repaint(50L);
-				boolean moved = false;
-				if (keys[KeyEvent.VK_W]) {
-					moved = true;
-					self.y -= 0.005;
-				}
-				if (keys[KeyEvent.VK_A]) {
-					moved = true;
-					self.x -= 0.005;
-				}
-				if (keys[KeyEvent.VK_S]) {
-					moved = true;
-					self.y += 0.005;
-				}
-				if (keys[KeyEvent.VK_D]) {
-					moved = true;
-					self.x += 0.005;
-				}
-				if (moved) {
-					out.writeInt(MOVE);
-					out.writeDouble(self.x);
-					out.writeDouble(self.y);
-				}
+				
+				handleMovement();
+				
 				try {
 					Thread.sleep(50);
 				} catch (Exception e) {
@@ -93,7 +77,38 @@ public class Client extends Thread {
 		}
 		
 	}
-	
+	/**
+	 * Check for any keys being pressed, and tell the server is the player moved.
+	 * @throws IOException if the stream to the server is closed
+	 */
+	private void handleMovement() throws IOException {
+		boolean moved = false;
+		if (keys[KeyEvent.VK_W]) {
+			moved = true;
+			self.y -= 0.003 + 0.004 * stamina;
+		}
+		if (keys[KeyEvent.VK_A]) {
+			moved = true;
+			self.x -= 0.003 + 0.004 * stamina;
+		}
+		if (keys[KeyEvent.VK_S]) {
+			moved = true;
+			self.y += 0.003 + 0.004 * stamina;
+		}
+		if (keys[KeyEvent.VK_D]) {
+			moved = true;
+			self.x += 0.003 + 0.004 * stamina;
+		}
+		if (moved) {
+			out.writeInt(MOVE);
+			out.writeDouble(self.x);
+			out.writeDouble(self.y);
+			stamina = Math.max(stamina-0.015, 0);
+		} else {
+			stamina = Math.min(stamina+0.05, 1);
+		}
+	}
+
 	/**
 	 * Starts the ClientInputThread and waits for a Map to be received, then returns.
 	 */
@@ -132,11 +147,6 @@ public class Client extends Thread {
 				}
 				out.writeInt(SET_USERNAME);
 				out.writeUTF(lw.username.getText());
-				out.writeInt(MOVE);
-				out.writeDouble(1);
-				out.writeDouble(1);
-				self.x = 1;
-				self.y = 1;
 				self.name = lw.username.getText();
 				connection = s;
 				break;

@@ -52,55 +52,23 @@ public final class Utils {
 	}
 	
 	/**
-	 * If n is less then min, returns min else returns n;
+	 * Finds the minimum distance from (px, py) to a line segment with end points (lx1, ly1), (lx2,
+	 * ly2)
 	 * 
-	 * @param n the number to minimize
-	 * @param min the minimum
-	 * @return the minimized number
+	 * @param px the points x
+	 * @param py the points y
+	 * @param lx1 the start x of the line
+	 * @param ly1 the start y of the line
+	 * @param lx2 the end x of the line
+	 * @param ly2 the end y of the line
+	 * @return the distance
 	 */
-	public static int min(int n, int min) {
-		if (n < min) {
-			return min;
-		}
-		return n;
-	}
-	
-	/**
-	 * If n is greater then max, returns max else returns n;
-	 * 
-	 * @param n the number to maximize
-	 * @param min the maximum
-	 * @return the maximized number
-	 */
-	public static int max(int n, int max) {
-		if (n > max) {
-			return max;
-		}
-		return n;
-	}
-	
-	/**
-	 * Uses both Utils.min and Utils.max on n
-	 * 
-	 * @param n the number
-	 * @param min the min value
-	 * @param max the max value
-	 * @return the minimized and maximized number
-	 */
-	public static int minMax(int n, int min, int max) {
-		return max(min(n, min), max);
-	}
-	
-	/**
-	 * Uses both Utils.min and Utils.max on n
-	 * 
-	 * @param n the number
-	 * @param min the min value
-	 * @param max the max value
-	 * @return the minimized and maximized number
-	 */
-	public static int maxMin(int n, int max, int min) {
-		return minMax(n, min, max);
+	public static double distanceToLineSegment(double px, double py, double lx1, double ly1, double lx2, double ly2) {
+		double line_dist = Utils.distance(lx1, ly1, lx2, ly2);
+		if (line_dist == 0) return Utils.distance(px, py, lx1, ly1);
+		double t = ((px - lx1) * (lx2 - lx1) + (py - ly1) * (ly2 - ly1)) / line_dist;
+		t = Utils.minMax(t, 0, 1);
+		return Utils.distance(px, py, lx1 + t * (lx2 - lx1), ly1 + t * (ly2 - ly1));
 	}
 	
 	/**
@@ -593,6 +561,110 @@ public final class Utils {
 	 */
 	public static double yMove(int dir) {
 		return y[Math.abs(dir % 360)];
+	}
+	
+	/**
+	 * If n is less then min, returns min else returns n;
+	 * 
+	 * @param n the number to minimize
+	 * @param min the minimum
+	 * @return the minimized number
+	 */
+	public static int min(int n, int min) {
+		if (n < min) {
+			return min;
+		}
+		return n;
+	}
+	
+	/**
+	 * If n is greater then max, returns max else returns n;
+	 * 
+	 * @param n the number to maximize
+	 * @param min the maximum
+	 * @return the maximized number
+	 */
+	public static int max(int n, int max) {
+		if (n > max) {
+			return max;
+		}
+		return n;
+	}
+	
+	/**
+	 * Uses both Utils.min and Utils.max on n
+	 * 
+	 * @param n the number
+	 * @param min the min value
+	 * @param max the max value
+	 * @return the minimized and maximized number
+	 */
+	public static int minMax(int n, int min, int max) {
+		return max(min(n, min), max);
+	}
+	
+	/**
+	 * Uses both Utils.min and Utils.max on n
+	 * 
+	 * @param n the number
+	 * @param min the min value
+	 * @param max the max value
+	 * @return the minimized and maximized number
+	 */
+	public static int maxMin(int n, int max, int min) {
+		return minMax(n, min, max);
+	}
+	
+	/**
+	 * If n is less then min, returns min else returns n;
+	 * 
+	 * @param n the number to minimize
+	 * @param min the minimum
+	 * @return the minimized number
+	 */
+	public static double min(double n, double min) {
+		if (n < min) {
+			return min;
+		}
+		return n;
+	}
+	
+	/**
+	 * If n is greater then max, returns max else returns n;
+	 * 
+	 * @param n the number to maximize
+	 * @param min the maximum
+	 * @return the maximized number
+	 */
+	public static double max(double n, double max) {
+		if (n > max) {
+			return max;
+		}
+		return n;
+	}
+	
+	/**
+	 * Uses both Utils.min and Utils.max on n
+	 * 
+	 * @param n the number
+	 * @param min the min value
+	 * @param max the max value
+	 * @return the minimized and maximized number
+	 */
+	public static double minMax(double n, double min, double max) {
+		return max(min(n, min), max);
+	}
+	
+	/**
+	 * Uses both Utils.min and Utils.max on n
+	 * 
+	 * @param n the number
+	 * @param min the min value
+	 * @param max the max value
+	 * @return the minimized and maximized number
+	 */
+	public static double maxMin(double n, double max, double min) {
+		return minMax(n, min, max);
 	}
 	
 	/**

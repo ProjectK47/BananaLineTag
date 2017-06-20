@@ -42,6 +42,11 @@ public class Server extends Thread {
 		System.out.println("Server started.");
 	}
 	
+	/**
+	 * New Server using the specified Map.
+	 * 
+	 * @param m the Map to use
+	 */
 	public Server(Map m) {
 		map = m;
 	}
@@ -96,13 +101,18 @@ public class Server extends Thread {
 		}
 	}
 	
+	/**
+	 * Disconnects a user, and messages all other inGame clients of their departure.
+	 * 
+	 * @param c the Connection that is to be disconnected
+	 */
 	public void disconnected(Connection c) {
 		c.interrupt();
 		c.connected = false;
 		this.connections.remove(c);
 		if (c.inGame) {
 			for (Connection co : connections) {
-				co.removePlayer(co.player.name);
+				co.removePlayer(c.player.name);
 			}
 		}
 	}

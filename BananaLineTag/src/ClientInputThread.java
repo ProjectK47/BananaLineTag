@@ -10,15 +10,14 @@ public class ClientInputThread extends Thread {
 		this.c = c;
 	}
 	
-	
 	public void run() {
 		try {
 			while (true) {
 				int command = c.in.readInt();
-//				System.out.println(command);
+				//				System.out.println(command);
 				if (command == Connection.ADD_PLAYER) {
 					Player p = new Player();
-
+					
 					p.name = c.in.readUTF();
 					c.players.add(p);
 					System.out.println("Added Player");
@@ -52,7 +51,21 @@ public class ClientInputThread extends Thread {
 					int size = c.in.readInt();
 					byte[] b = new byte[size];
 					c.in.read(b);
-					c.map = (Map)Utils.deserDecompress(b);
+					c.map = (Map) Utils.deserDecompress(b);
+					try {
+						//Move the player to a valid location on the new Map.
+						double x = c.map.lines.get(0).x1;
+						double y = c.map.lines.get(0).y1;
+						c.self.x = x;
+						c.self.y = y;
+						
+						c.out.writeInt(Client.MOVE);
+						c.out.writeDouble(x);
+						c.out.writeDouble(y);
+					} catch (ArrayIndexOutOfBoundsException e) {
+					
+					}
+					
 				}
 			}
 		} catch (Exception e) {
