@@ -77,12 +77,18 @@ public class Client extends Thread {
 		}
 		
 	}
+	
 	/**
 	 * Check for any keys being pressed, and tell the server is the player moved.
+	 * 
 	 * @throws IOException if the stream to the server is closed
 	 */
 	private void handleMovement() throws IOException {
 		boolean moved = false;
+		boolean wasOnMap = map.onMap(self);
+		double wasX = self.x;
+		double wasY = self.y;
+		
 		if (keys[KeyEvent.VK_W]) {
 			moved = true;
 			self.y -= 0.003 + 0.004 * stamina;
@@ -100,15 +106,25 @@ public class Client extends Thread {
 			self.x += 0.003 + 0.004 * stamina;
 		}
 		if (moved) {
-			out.writeInt(MOVE);
-			out.writeDouble(self.x);
-			out.writeDouble(self.y);
-			stamina = Math.max(stamina-0.015, 0);
-		} else {
-			stamina = Math.min(stamina+0.05, 1);
+			if (map.onMap(self)) {
+				out.writeInt(MOVE);
+				out.writeDouble(self.x);
+				out.writeDouble(self.y);
+				stamina = Math.max(stamina - 0.015, 0);
+			} else if (wasOnMap) {
+				double toX = self.x;
+				self.x = wasX;
+				if (map.onMap(self)) return;
+				self.x = toX;
+				self.y = wasY;
+				if (map.onMap(self)) return;
+				self.x = wasX;
+				
+			}
 		}
+		
 	}
-
+	
 	/**
 	 * Starts the ClientInputThread and waits for a Map to be received, then returns.
 	 */

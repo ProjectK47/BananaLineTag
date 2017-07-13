@@ -52,10 +52,12 @@ public class Map implements Serializable {
 			return false;
 		}
 		for (Line l : lines) {
-			if (Utils.distanceToLineSegment(p.x, p.y, l.x1, l.y1, l.x2, l.y2) <= l.thickness + s) {
+			double dis = Utils.distanceToLineSegment(p.x, p.y, l.x1, l.y1, l.x2, l.y2);
+			if (dis <= l.thickness + s / 2) {
 				return true;
 			}
 		}
+
 		return false;
 	}
 	

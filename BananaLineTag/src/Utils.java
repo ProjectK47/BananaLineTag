@@ -52,23 +52,27 @@ public final class Utils {
 	}
 	
 	/**
-	 * Finds the minimum distance from (px, py) to a line segment with end points (lx1, ly1), (lx2,
-	 * ly2)
+	 * Finds the minimum distance from (pointX, pointY) to a line segment with end points (lx1,
+	 * ly1), (lx2, ly2)
 	 * 
-	 * @param px the points x
-	 * @param py the points y
+	 * @param pointX the points x
+	 * @param pointY the points y
 	 * @param lx1 the start x of the line
 	 * @param ly1 the start y of the line
 	 * @param lx2 the end x of the line
 	 * @param ly2 the end y of the line
 	 * @return the distance
 	 */
-	public static double distanceToLineSegment(double px, double py, double lx1, double ly1, double lx2, double ly2) {
-		double line_dist = Utils.distance(lx1, ly1, lx2, ly2);
-		if (line_dist == 0) return Utils.distance(px, py, lx1, ly1);
-		double t = ((px - lx1) * (lx2 - lx1) + (py - ly1) * (ly2 - ly1)) / line_dist;
-		t = Utils.minMax(t, 0, 1);
-		return Utils.distance(px, py, lx1 + t * (lx2 - lx1), ly1 + t * (ly2 - ly1));
+	public static double distanceToLineSegment(double pointX, double pointY, double lx1, double ly1, double lx2, double ly2) {
+		double px = lx2 - lx1;
+		double py = ly2 - ly1;
+		double tmp = px * px + py * py;
+		double u = (((pointX - lx1) * px) + ((pointY - ly1) * py)) / tmp;
+		if (u > 1) u = 1;
+		if (u < 0) u = 0;
+		double dx = (lx1 + (u * px)) - pointX;
+		double dy = (ly1 + (u * py)) - pointY;
+		return Math.sqrt((dx * dx) + (dy * dy));
 	}
 	
 	/**
