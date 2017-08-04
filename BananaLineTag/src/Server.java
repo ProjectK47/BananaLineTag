@@ -10,6 +10,7 @@ import javax.swing.JFileChooser;
 public class Server extends Thread {
 	
 	public static void main(String[] args) {
+		System.setProperty("java.awt.headless", "true");
 		args = new String[] { "/users/leif/basketball court.bltm" };
 		if (args.length == 0) {
 			JFileChooser fc = new JFileChooser();

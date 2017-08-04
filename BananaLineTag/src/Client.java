@@ -34,11 +34,34 @@ public class Client extends Thread {
 	boolean[] keys = new boolean[65535];
 	
 	public void run() {
+		while (true) {
+			login();//open login window and wait to be connected to a server
+			
+			initInput();
+			
+			initFrame();
+			
+			try {
+				//// client tick loop
+				while (true) {
+					
+					d.repaint(50L);
+					
+					handleMovement();
+					
+					try {
+						Thread.sleep(50);
+					} catch (Exception e) {
+					}
+				}
+			} catch (Exception e) {
+			
+			}
+		}
 		
-		login();//open login window and wait to be connected to a server
-		
-		initInput();
-		
+	}
+	
+	private void initFrame() {
 		JFrame frame = new JFrame();
 		frame.setSize(500, 500);
 		sp = new SquarePanel();
@@ -60,22 +83,6 @@ public class Client extends Thread {
 				keys[e.getKeyCode()] = false;
 			}
 		});
-		try {
-			while (true) {
-				
-				d.repaint(50L);
-				
-				handleMovement();
-				
-				try {
-					Thread.sleep(50);
-				} catch (Exception e) {
-				}
-			}
-		} catch (Exception e) {
-		
-		}
-		
 	}
 	
 	/**
@@ -89,22 +96,27 @@ public class Client extends Thread {
 		double wasX = self.x;
 		double wasY = self.y;
 		
-		if (keys[KeyEvent.VK_W]) {
+		//// check keys
+		
+		if (keys[KeyEvent.VK_W] || keys[KeyEvent.VK_UP]) {
 			moved = true;
 			self.y -= 0.003 + 0.004 * stamina;
 		}
-		if (keys[KeyEvent.VK_A]) {
+		if (keys[KeyEvent.VK_A] || keys[KeyEvent.VK_LEFT]) {
 			moved = true;
 			self.x -= 0.003 + 0.004 * stamina;
 		}
-		if (keys[KeyEvent.VK_S]) {
+		if (keys[KeyEvent.VK_S] || keys[KeyEvent.VK_DOWN]) {
 			moved = true;
 			self.y += 0.003 + 0.004 * stamina;
 		}
-		if (keys[KeyEvent.VK_D]) {
+		if (keys[KeyEvent.VK_D] || keys[KeyEvent.VK_RIGHT]) {
 			moved = true;
 			self.x += 0.003 + 0.004 * stamina;
 		}
+		
+		//// handle movement by forcing player to stay on map
+		
 		if (moved) {
 			if (map.onMap(self)) {
 				out.writeInt(MOVE);
@@ -114,10 +126,20 @@ public class Client extends Thread {
 			} else if (wasOnMap) {
 				double toX = self.x;
 				self.x = wasX;
-				if (map.onMap(self)) return;
+				if (map.onMap(self)) {
+					out.writeInt(MOVE);
+					out.writeDouble(self.x);
+					out.writeDouble(self.y);
+					return;
+				}
 				self.x = toX;
 				self.y = wasY;
-				if (map.onMap(self)) return;
+				if (map.onMap(self)) {
+					out.writeInt(MOVE);
+					out.writeDouble(self.x);
+					out.writeDouble(self.y);
+					return;
+				}
 				self.x = wasX;
 				
 			}

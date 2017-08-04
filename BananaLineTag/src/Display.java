@@ -30,12 +30,17 @@ public class Display extends JPanel {
 	}
 	
 	protected void paintComponent(Graphics g) {
+		
+		//// setup
+		
 		g.setColor(new Color(map.r, map.g, map.b));
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.black);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		Stroke s = g2.getStroke();
+		
+		//// draw map
 		
 		for (Line l : map.lines) {
 			int cap = l.round ? BasicStroke.CAP_ROUND : BasicStroke.CAP_SQUARE;
@@ -44,11 +49,22 @@ public class Display extends JPanel {
 			g.drawLine((int) (getWidth() * l.x1), (int) (getHeight() * l.y1), (int) (getWidth() * l.x2), (int) (getHeight() * l.y2));
 		}
 		
-		g2.setStroke(s);
+		g2.setStroke(s); //// reset stroke
+		
+		//// draw players
+		
+		// setup
+		
 		g.setFont(new Font("Copperplate", Font.PLAIN, (int) (getHeight() * Player.PLAYER_SIZE)));
 		g.setColor(Color.black);
 		FontMetrics fm = g.getFontMetrics();
+		
+		g2.setStroke(new BasicStroke(Math.round(getHeight() * 0.005)));
+
 		for (Player p : players) {
+			
+			// draw one player
+			
 			int width = (int) (getWidth() * Player.PLAYER_SIZE);
 			int height = (int) (getHeight() * Player.PLAYER_SIZE);
 			
@@ -57,14 +73,29 @@ public class Display extends JPanel {
 			
 			g.drawImage(p.icon, x, y, width, height, null);
 			
+			// draw range
+			
+			g.setColor(new Color(0, 127, 255, 127));
+			
+			g.drawOval(x + width / 2 - width * 2, y + height / 2 - height * 2, width * 4, height * 4);
+			
+			// draw label
+			
 			x = (int) (getWidth() * p.oldx) - fm.stringWidth(p.name) / 2;
 			y = (int) (getHeight() * p.oldy) - height / 2 - fm.getDescent();
+			g.setColor(Color.BLACK);
 			g.drawString(p.name, x, y);
 			
 			p.oldx = (p.x + p.oldx + p.oldx) / 3;
 			p.oldy = (p.y + p.oldy + p.oldy) / 3;
 			
 		}
+		
+		
+		//// draw self
+		
+		g2.setStroke(new BasicStroke(Math.round(getHeight() * 0.005)));
+		
 		int width = (int) (getWidth() * Player.PLAYER_SIZE);
 		int height = (int) (getHeight() * Player.PLAYER_SIZE);
 		
@@ -73,8 +104,17 @@ public class Display extends JPanel {
 		
 		g.drawImage(self.icon, x, y, width, height, null);
 		
+		// draw range
+		
+		g.setColor(new Color(0, 255, 0, 127));
+		
+		g.drawOval(x + width / 2 - width * 2, y + height / 2 - height * 2, width * 4, height * 4);
+		
+		// draw label
+		
 		x = (int) (getWidth() * self.oldx) - fm.stringWidth(self.name) / 2;
 		y = (int) (getHeight() * self.oldy) - height / 2 - fm.getDescent();
+		g.setColor(Color.GREEN);
 		
 		g.drawString(self.name, x, y);
 		
