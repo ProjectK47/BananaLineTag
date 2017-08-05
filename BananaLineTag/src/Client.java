@@ -48,6 +48,7 @@ public class Client extends Thread {
 				while (true) {
 					
 					d.repaint(50L);
+					d.stamina = stamina;
 					
 					handleMovement();
 					
@@ -166,6 +167,8 @@ public class Client extends Thread {
 				self.x = wasX;
 				
 			}
+		} else {
+			stamina = Math.min(stamina + 0.1, 1);
 		}
 		
 	}

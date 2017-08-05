@@ -23,6 +23,8 @@ public class Display extends JPanel {
 	
 	Player self;
 	
+	double stamina = 0;
+	
 	public Display(Map m, ArrayList<Player> ps, Player self) {
 		map = m;
 		players = ps;
@@ -128,6 +130,20 @@ public class Display extends JPanel {
 		self.oldx = (self.x + self.oldx) / 2;
 		self.oldy = (self.y + self.oldy) / 2;
 		
+		//// stamina bar 
+		
+		g2.setStroke(s);
+
+		g.setColor(Color.BLACK);
+		
+		g.fillRect(10, 10, (int) (getWidth() * 0.1 * stamina), (int) (getHeight() * Player.PLAYER_SIZE));
+		
+		g.setColor(Color.white);
+		
+		g.drawRect(10, 10, (int) (getWidth() * 0.1 * stamina), (int) (getHeight() * Player.PLAYER_SIZE));
+		
+		g.drawString("Stamina", 10, 10+fm.getAscent()+(int) (getHeight() * Player.PLAYER_SIZE));
+
 	}
 	
 	public Player getPlayerForClick(int cx, int cy) {

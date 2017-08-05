@@ -141,8 +141,10 @@ public class Connection extends Thread {
 	/** String player */
 	public static final int REMOVE_PLAYER = 4;
 	/** String player */
+	@Deprecated
 	public static final int DOWN = 5;
 	/***/
+	@Deprecated
 	public static final int UP = 6;
 	/** String name, int length, byte[length] Utils.imageToBytes(image) */
 	public static final int SET_PLAYER_ICON = 7;
