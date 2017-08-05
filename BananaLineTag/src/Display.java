@@ -60,7 +60,7 @@ public class Display extends JPanel {
 		FontMetrics fm = g.getFontMetrics();
 		
 		g2.setStroke(new BasicStroke(Math.round(getHeight() * 0.005)));
-
+		
 		for (Player p : players) {
 			
 			// draw one player
@@ -75,22 +75,29 @@ public class Display extends JPanel {
 			
 			// draw range
 			
-			g.setColor(new Color(0, 127, 255, 127));
-			
-			g.drawOval(x + width / 2 - width * 2, y + height / 2 - height * 2, width * 4, height * 4);
+			if (p.state == Player.STATE_UP) {
+				g.setColor(new Color(0, 127, 255, 127));
+				
+				g.drawOval(x + width / 2 - width * 2, y + height / 2 - height * 2, width * 4, height * 4);
+			}
 			
 			// draw label
 			
 			x = (int) (getWidth() * p.oldx) - fm.stringWidth(p.name) / 2;
 			y = (int) (getHeight() * p.oldy) - height / 2 - fm.getDescent();
-			g.setColor(Color.BLACK);
+			if (p.state == Player.STATE_UP) {
+				g.setColor(Color.BLACK);
+			} else if (p.state == Player.STATE_DOWN) {
+				g.setColor(new Color(0, 0, 0, 127));
+			} else if (p.state == Player.STATE_RPS) {
+				g.setColor(new Color(0, 0, 127, 127));
+			}
 			g.drawString(p.name, x, y);
 			
 			p.oldx = (p.x + p.oldx + p.oldx) / 3;
 			p.oldy = (p.y + p.oldy + p.oldy) / 3;
 			
 		}
-		
 		
 		//// draw self
 		
@@ -121,6 +128,25 @@ public class Display extends JPanel {
 		self.oldx = (self.x + self.oldx) / 2;
 		self.oldy = (self.y + self.oldy) / 2;
 		
+	}
+	
+	public Player getPlayerForClick(int cx, int cy) {
+		for (Player p : players) {
+			
+			// get x y width and height
+			
+			int width = (int) (getWidth() * Player.PLAYER_SIZE);
+			int height = (int) (getHeight() * Player.PLAYER_SIZE);
+			
+			int x = (int) (getWidth() * p.oldx) - width / 2;
+			int y = (int) (getHeight() * p.oldy) - height / 2;
+			
+			if (cx > x && cx < x + width && cy > y && cy < y + height) {
+				return p;
+			}
+			
+		}
+		return null;
 	}
 	
 }

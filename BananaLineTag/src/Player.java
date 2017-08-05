@@ -17,7 +17,7 @@ public class Player {
 	double oldx = 0;
 	double oldy = 0;
 	
-	int state = 0;
+	int state = STATE_NOT_INGAME;
 	
 	BufferedImage icon;
 	
@@ -25,6 +25,7 @@ public class Player {
 	public static final int STATE_NOT_INGAME = 0;
 	public static final int STATE_UP = 1;
 	public static final int STATE_DOWN = 2;
+	public static final int STATE_RPS = 3;
 	
 	public static final double PLAYER_SIZE = 0.030;
 }

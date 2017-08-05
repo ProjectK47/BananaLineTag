@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -83,6 +85,27 @@ public class Client extends Thread {
 				keys[e.getKeyCode()] = false;
 			}
 		});
+		d.addMouseListener(new MouseListener() {
+			
+			public void mouseClicked(MouseEvent e) {}
+			
+			public void mousePressed(MouseEvent e) {
+				clickPlayer(d.getPlayerForClick(e.getX(), e.getY()));
+			}
+			
+			public void mouseReleased(MouseEvent e) {}
+			
+			public void mouseEntered(MouseEvent e) {}
+			
+			public void mouseExited(MouseEvent e) {}
+			
+		});
+	}
+	
+	public void clickPlayer(Player p) {
+		if (p != null) {
+		
+		}
 	}
 	
 	/**

@@ -66,6 +66,19 @@ public class ClientInputThread extends Thread {
 					
 					}
 					
+				} else if (command == Connection.SET_PLAYER_STATE) {
+					String name = c.in.readUTF();
+					int state = c.in.readInt();
+					if (name.equals(c.self.name)) {
+						c.self.state = state;
+					} else {
+						for (Player p : c.players) {
+							if (name.equals(p.name)) {
+								p.state = state;
+								break;
+							}
+						}
+					}
 				}
 			}
 		} catch (Exception e) {

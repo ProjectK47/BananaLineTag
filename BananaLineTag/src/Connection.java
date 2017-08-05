@@ -49,6 +49,7 @@ public class Connection extends Thread {
 				
 				if (command == Client.SET_USERNAME) {
 					setUsername(server.getUsableName(in.readUTF()));
+					player.state = Player.STATE_UP;
 				} else if (command == Client.MOVE) {
 					double x = in.readDouble();
 					double y = in.readDouble();
@@ -147,4 +148,6 @@ public class Connection extends Thread {
 	public static final int SET_PLAYER_ICON = 7;
 	/** int length, byte[length] Utils.serCompress(map) */
 	public static final int SET_MAP = 8;
+	/** String name, int state */
+	public static final int SET_PLAYER_STATE = 9;
 }
